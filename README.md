@@ -355,7 +355,24 @@ A **Multibranch Pipeline** automatically creates pipelines for each branch in a 
 ### Interview Key Point:
 > Multibranch pipelines enable CI/CD for multiple branches.
 
+Create a job with Multi-branch -Pipeline --> BranchSources --> ADD Souce(Git)--> enter repo url and configure git credentials--> in behaviour filter by regular expression(.*) -->Buildconfiguration in script path enter jenkins file name --> save and build
+
+## Branch based logic for Multipipeline branch
+
+
 ---
+## Credentials in Jenkins
+
+"Credentials" Plugin to store and Manage them Centrally
+
+Manage Jenkins --> Manage Credentials --> ADD Credentials (2 scopes (1. System (Jenkins and nodes only))- it won't accessible by Jobs.  2. Global- it can be accessible by jobs ).
+There is a thrid scope to store the credentials
+Go to Multi-branch pipeline --> Credentials --> It is limited to your project only, can't accessible by other projects.
+
+
+
+
+
 
 ## 9️⃣ Configure Automated Versioning
 
