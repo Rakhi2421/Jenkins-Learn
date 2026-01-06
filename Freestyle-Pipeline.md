@@ -66,6 +66,19 @@ A **Pipeline Job** defines the entire CI/CD workflow as code using a **Jenkinsfi
 ### Interview Point:
 > Pipelines are preferred for enterprise CI/CD because they are scalable and version controlled.
 
+# When to use Pipeline JOb
+
+ - Want to execue 2 Parallel tasks
+ - you need user input
+ - Conditional Statement
+ - Set Variables
+ - It's not limited to Plugins
+# Free style Job
+
+- Chained Free style job rely on Plugins
+- Different plugins in multiple jobs.
+- Manage those plugins and high managing cost
+
 ---
 
 ## 📊 Comparison Table
