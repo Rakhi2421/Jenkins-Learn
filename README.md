@@ -154,7 +154,60 @@ Docker integration enables Jenkins to build and package applications as containe
 > Jenkins + Docker enables containerized CI/CD pipelines.
 
 ---
+# Build a Docker image using Jenkins Free Style Job
 
+## Deploy a Jenkins container by mounting docker socket and docker run time folder to it.
+```bash
+docker run -p 8080:8080 -p 50000:50000 \
+-v Jenkins_home:/var/Jenkins_home   # this is a volume where our previous jenkins jobs plugins are configured in old jenkins container
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v $(which docker):/usr/bin/docker jenkins/jenkins:lts
+```
+After executing above command when we run docker pull redis, we may get /var/lib/docker.sock: Permission denied.  
+Then login to container using docker exec -u 0 conatiner_id bash and provide executable permission to that folder 
+```bash
+chmod 666 /var/run/docker.sock
+```
+Go to a job in that select a build step and select execute shell command
+```bash
+docker build -t java-maven-app:1.0 .
+```
+
+# Push to docker private repository using jenkins freestyle job
+Things we are going to do:  
+- create docker hub account
+  - Create a repo as demo-app
+- configure that credentials in jenkins
+  - Manage Jenkins --> Security section (Manage Credentials) --> Stores scoped to jenkins(jenkins) --> Global credentials(Add Credentials) --> Select username with password --> Enter dockerhub username and password --> ID as dockerhub-cred(your wish name )
+
+- Now go to Jenkins Job-> Configure Jenkins -> Add Build environment step (Use secret text or file) --> Bindings (Username and password) --> enter variable name as your wish for username(i used USERNAME) and password(i used PASSWORD) variable value to call it on entire job.  
+  Now in build step executable shell command.
+```bash
+ docker build  -t Rakhi2421/demo-app:jma-1.0
+ echo $PASSWORD | docker login -u USERNAME --password-stdin
+ docker push   Rakhi2421/demo-app:jma-1.0
+```
+
+ # Push image to NEXUS private repository using jenkins freestyle job
+ ```bash
+vim /etc/docker/daemon.json
+{
+"insecure -registries":["ip:port(mentioned for repo in nexus)"]
+}
+systemctl restart docker
+# Then start all the containers again
+and change the permissions of a docker socket(inside jenkins container) mounted on jenkins container.
+```
+- configure Nexus credentials in jenkins
+  - Manage Jenkins --> Security section (Manage Credentials) --> Stores scoped to jenkins(jenkins) --> Global credentials(Add Credentials) --> Select username with password --> Enter Nexus username and password --> ID as Nexus-cred(your wish name )
+ - Now go to Jenkins Job-> Configure Jenkins -> Add Build environment step (Use secret text or file) --> Bindings (Username and password) --> enter variable name as your wish for username(i used USERNAME) and password(i used PASSWORD) variable value to call it on entire job.  
+  Now in build step executable shell command.
+```bash
+ docker build  -t IP:port/demo-app:jma-1.0
+ echo $PASSWORD | docker login -u USERNAME --password-stdin IP:port
+ docker push   IP:port/demo-app:jma-1.0
+```
+ 
 ## 6️⃣ Build Scripted Pipeline Job
 
 A **Scripted Pipeline** uses Groovy-based scripting to define CI/CD logic.
