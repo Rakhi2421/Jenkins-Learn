@@ -213,7 +213,7 @@ and change the permissions of a docker socket(inside jenkins container) mounted 
 A **Scripted Pipeline** uses Groovy-based scripting to define CI/CD logic.
 
 ### Characteristics:
-- Written using Groovy
+- Written using Groovy(Groovy is a Programming Language Similar to Java)
 - High flexibility
 - Suitable for complex pipelines
 
@@ -221,6 +221,12 @@ A **Scripted Pipeline** uses Groovy-based scripting to define CI/CD logic.
 > Scripted pipelines offer more control than freestyle jobs.
 
 ---
+
+Create a new job with pipeline object --> Select Pipeline definition as pipeline script from SCM --> IN SCM Select Git --> Enter repo url and in Script path enter the Jenkins file name and configure git credentials --> and select the branch our code where it exists.  
+Then click on build now.  
+
+
+
 
 ## 7️⃣ Jenkinsfile in Detail
 
@@ -241,6 +247,18 @@ A **Jenkinsfile** is a file that defines the pipeline as code.
 ### Interview Key Point:
 > Jenkinsfile enables Pipeline as Code.
 
+## Jenkins File 
+```bash
+pipeline{                              # Pipeline - Must be on top level
+    agent any                          # Agent any - Where to execute
+    stages {                           # Stages - Where the work happens
+        stage(build){                  # stages consists of stage and steps
+            steps {                         
+             }
+          }
+    }
+}
+```
 ---
 
 ## 8️⃣ Build Multibranch Pipeline
