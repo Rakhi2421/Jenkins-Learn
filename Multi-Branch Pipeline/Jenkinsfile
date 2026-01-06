@@ -1,0 +1,59 @@
+// There are 3 Types of jenkins jobs
+
+// 1. Freestyle job
+//  It is used when single task to be executed
+// FreestyleJob -- test
+// Freestylejob -- build
+// Freestylejob -- deploy
+
+// 2. Pipeline Job
+// It is better solution for CI/CD
+// Pipeline Job -- test+build+deploy
+
+// 3. Multi-branch Pipeline Job
+// It is the parent of Pipeline Jobs
+// It executes the Jenkinsfile of each and every branch of a repo  at a time. if jenkins file isn't there then it can't be executed.
+
+
+
+pipeline {
+    agent none
+    stages {
+        stage("test") {
+           steps {
+            script {
+                echo 'Testing the application...'
+                echo "executing pipeline for branch ${BRANCH_NAME}"
+            }                
+           }
+        }
+        stage("build") {
+            when {
+                expression {
+                    BRANCH_NAME == 'master'
+                }
+            }
+           steps {
+            script {
+                echo 'build the application...'
+            }                                
+           }
+        }
+        
+        stage("deploy") {
+            when {
+                expression {
+                    params.executeTests
+               }
+            }
+            steps {
+                script{
+                    echo 'deploying the application...'
+                    echo "deploying the version ${params.VERSION}"                  
+                }
+                
+                
+            }
+        }
+    }
+}
