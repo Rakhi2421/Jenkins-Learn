@@ -259,6 +259,88 @@ pipeline{                              # Pipeline - Must be on top level
     }
 }
 ```
+## Environment Variables
+What Variables are available in jenkins..!  
+- IP:8080/env-vars.html (This help us to know the list of environment varibles we can use)
+
+## Using credentials in Jenkins file
+1) Define credentials in Jenkins GUI
+2) "credentials("credentialID")" binds the credentials to your environment variables
+3) For that you need "Credentials Binding" Plugin
+ ```bash
+ agent any
+ environment{
+        NEW_VERSION = '1.3.0'
+        SERVER_CREDENTIALS = credentials('server-credentials') // Here server-credentials is a Credentials id while creating in jenkins i used.
+        // It is referred in deploy step
+    }
+  #inside steps 
+  withCredentials([
+                    usernamePassword(credentials: 'server-credentials', usernameVariable: USER, passwordVariable: PWD)
+                ]) {
+                    sh "some script ${USER} ${PWD}"
+                }
+```
+## Specifying Tools - Access Build tools for your project
+ Only 3 build tools available : gradle,maven and jdk!
+```bash
+ tools{
+        maven 'Maven'
+        gradle 'NAME'
+        jdk 'NAME'
+    }
+```
+
+## Parameters in Jenkins File
+ # Parameterize your build
+Types of your parameter:
+- string (name,defaultValue,description)
+- choice (name,choices,description)
+- booleanParam (name, defaultValue, description)
+
+```bash
+agentany
+ parameters{
+        string (name: 'VERSION',defaultValue: '',description: 'version to deploy on prod')
+        choice (name: 'VERSION',choices: ['1.1.0', '1.2.0', '1.3.0'],description: '')
+        booleanParam (name: 'executeTests', defaultValue: true, description: '')
+    }
+ stage("deploy") {
+            when {
+                expression {
+                    params.executeTests
+               }
+            }
+            steps {
+                echo 'deploying the application...'
+                echo "deploying the version ${params.VERSION}"
+                withCredentials([
+                    usernamePassword(credentials: 'server-credentials', usernameVariable: USER, passwordVariable: PWD)
+                ]) {
+                    sh "some script ${USER} ${PWD}"
+                }
+            }
+        }
+```
+
+## Input Parameter for user Input
+- In some cases, we have to deploy on one environment among three and as a jenkins admin you have to configure one job but you must give option to user to select either dev,test or stage
+```bash
+stage("deploy") {
+            input {
+              message "Select environment to deploy to"
+              ok "Done"
+              parameters {
+                  choice (name: 'ENV',choices: ['dev', 'staging', 'prod'],description: '')
+              }
+            }
+            steps {
+                script {
+                    gv.deployApp ()
+                    echo "deploying to ${ENV}"
+                }
+
+``` 
 ---
 
 ## 8️⃣ Build Multibranch Pipeline
